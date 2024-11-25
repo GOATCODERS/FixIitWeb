@@ -1,1 +1,7 @@
+# Ignore venv (virtual environment folder)
 venv/
+
+# Ignore other files/folders as needed
+*.pyc
+*.log
+__pycache__/
