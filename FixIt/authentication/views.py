@@ -5,7 +5,7 @@ from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-
+from authentication.decorators import role_required
 
 User = get_user_model()
 
@@ -118,3 +118,11 @@ def password_reset_confirm(request, uidb64, token):
 
 def password_reset_complete(request):
     return render(request, "authentication/password_reset_complete.html")
+
+
+@role_required(['admin', 'employee'])
+def employee_dashboard(request):
+    return render(request, 'employee/dashboard.html')
+
+def home(request):
+    return render(request, 'homepage.html')
