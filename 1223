@@ -1,0 +1,29 @@
+[33mcommit aa39c2fa11575d3f5c9d3da04e3b8fa638a70128[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Thokozani Masanabo <thokozani26sngalela@gmail.com>
+Date:   Thu Nov 28 11:07:20 2024 +0200
+
+    created the report app and it's templates
+
+[33mcommit 4688e4fb1faba310c10285a56cf3f1d3a04e6307[m
+Author: Thokozani Masanabo <thokozani26sngalela@gmail.com>
+Date:   Mon Nov 25 13:56:34 2024 +0200
+
+    First comment with authentication half complete
+
+[33mcommit b49463b11a9bef385a7427612a099d884745ec19[m
+Author: Thokozani Masanabo <thokozani26sngalela@gmail.com>
+Date:   Mon Nov 25 13:55:12 2024 +0200
+
+    update .gitignore
+
+[33mcommit 9ef12754ca82ec697782371470350a2f62982845[m
+Author: Thokozani Masanabo <thokozani26sngalela@gmail.com>
+Date:   Mon Nov 25 13:52:10 2024 +0200
+
+    Add venv to .gitignore
+
+[33mcommit 493e4b9c4d1df0e7d2892a509f06e4ae0210237f[m
+Author: Thokozani Masanabo <thokozani26sngalela@gmail.com>
+Date:   Tue Nov 19 13:23:06 2024 +0200
+
+    first commit

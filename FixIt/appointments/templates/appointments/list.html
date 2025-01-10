@@ -1,0 +1,22 @@
+<!-- appointments/list.html -->
+<h2>My Appointments</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Report</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for appointment in appointments %}
+        <tr>
+            <td><a href="{% url 'report_detail' appointment.report.id %}">Report #{{ appointment.report.id }}</a></td>
+            <td>{{ appointment.date }}</td>
+            <td>{{ appointment.time }}</td>
+            <td>{{ appointment.status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

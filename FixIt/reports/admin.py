@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Report, Technician
+from .models import Report, Technician, FaultType
+
+
+class FaultTypeAdmin(admin.ModelAdmin):
+    list_display= ('name',)
+    search_fields = ('name',)
+
 
 # Customizing the admin interface for Report model
 class ReportAdmin(admin.ModelAdmin):
@@ -21,3 +27,4 @@ class TechnicianAdmin(admin.ModelAdmin):
 # Register models with the admin site
 admin.site.register(Report, ReportAdmin)
 admin.site.register(Technician, TechnicianAdmin)
+admin.site.register(FaultType, FaultTypeAdmin)

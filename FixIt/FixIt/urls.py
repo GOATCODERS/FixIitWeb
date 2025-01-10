@@ -22,6 +22,7 @@ from authentication import views
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin_dashboard'),
     path('auth/', include('authentication.urls')),
-    # path('reports', include(re)),
+    path('appointments/', include('appointments.urls')),
+    path('reports/', include('reports.urls')),
     path('', views.home, name='home'),
 ]

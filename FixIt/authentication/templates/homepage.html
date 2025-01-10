@@ -1,98 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to FixIt</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .hero-section {
-            background: linear-gradient(rgba(251, 255, 34, 0.496), rgba(43, 255, 46, 0.5)), url('https://source.unsplash.com/1600x900/?city,technology');
-            background-size: cover;
-            background-position: center;
-            color: rgb(0, 0, 0);
-            text-align: center;
-            padding: 100px 20px;
-        }
-        .hero-section h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        .hero-section p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-        .btn-primary {
-            padding: 10px 20px;
-            font-size: 1.1rem;
-            border-radius: 25px;
-        }
-        .features-section {
-            padding: 60px 20px;
-            text-align: center;
-        }
-        .features-section h2 {
-            margin-bottom: 40px;
-            font-size: 2.5rem;
-        }
-        .feature {
-            margin-bottom: 30px;
-        }
-        .feature i {
-            font-size: 3rem;
-            color: #43ff2a;
-        }
-        .footer {
-            background-color: #49ff3c27;
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <h1>Welcome to  FixIt</h1>
-        <p>Your one-stop platform for reporting and resolving electricity issues efficiently.</p>
-        <a href="/auth/register/" class="btn btn-success">Get Started</a>
-    </section>
+{% extends 'base.html' %}
 
-    <!-- Features Section -->
-    <section class="features-section">
-        <h2>Why Choose FixIt?</h2>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 feature">
-                    <i class="fas fa-bolt"></i>
-                    <h3>Report Issues</h3>
-                    <p>Quickly report faults like transformer issues, streetlight outages, and more.</p>
-                </div>
-                <div class="col-md-4 feature">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <h3>Track Progress</h3>
-                    <p>Easily monitor the status of your reported issues in real-time.</p>
-                </div>
-                <div class="col-md-4 feature">
-                    <i class="fas fa-headset"></i>
-                    <h3>24/7 Support</h3>
-                    <p>We are here to assist you round-the-clock with any issues you face.</p>
-                </div>
+
+{% block title %}Welcome to FixIt{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/homestyle.css' %}">
+
+<section class="hero-section">
+    <h1>Welcome to  FixIt</h1>
+    <p>Your one-stop platform for reporting and resolving electricity issues efficiently.</p>
+    <a href="/auth/register/" class="btn btn-success">Get Started</a>
+</section>
+
+
+<section class="features-section">
+    <h2>Why Choose FixIt?</h2>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 feature">
+                <i class="fas fa-bolt"></i>
+                <h3>Report Issues</h3>
+                <p>Quickly report faults like transformer issues, streetlight outages, and more.</p>
+            </div>
+            <div class="col-md-4 feature">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Track Progress</h3>
+                <p>Easily monitor the status of your reported issues in real-time.</p>
+            </div>
+            <div class="col-md-4 feature">
+                <i class="fas fa-headset"></i>
+                <h3>24/7 Support</h3>
+                <p>We are here to assist you round-the-clock with any issues you face.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2024 FixIt. All Rights Reserved.</p>
-    </footer>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

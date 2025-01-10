@@ -1,0 +1,31 @@
+/* Table Enhancements */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9; /* Alternate row color */
+}
+
+.table-hover tbody tr:hover {
+    background-color: #e9f7e1; /* Hover effect */
+}
+
+/* Badges for Report Status */
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.7em;
+    border-radius: 0.5em;
+}
+
+/* For Status Colors */
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: black;
+}
+
+.bg-primary {
+    background-color: #0d6efd !important;
+    color: white;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+    color: white;
+}

@@ -36,11 +36,3 @@ class Technician(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
-class Appointment(models.Model):
-    report = models.OneToOneField(Report, on_delete=models.CASCADE)
-    technician = models.ForeignKey(Technician, on_delete=models.SET_NULL, null=True)
-    date = models.DateTimeField()
-    notes = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"Appointment for Report #{self.report.id}"
