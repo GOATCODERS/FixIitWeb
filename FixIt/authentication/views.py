@@ -35,9 +35,9 @@ def login_view(request):
             login(request, user)
             # Redirect based on user role
             if user.role == 'resident':
-                return redirect('resident_dashboard')  # Replace with your URL for residents
+                return redirect('home')
             elif user.role == 'employee':
-                return redirect('employee_dashboard')  # Replace with your URL for employees
+                return redirect('employee_dashboard')  
             elif user.role == 'admin':
                 return redirect('/admin/')  # Replace with your URL for admin
         else:
@@ -51,8 +51,6 @@ def logout_view(request):
     logout(request)
     return redirect('login')  # Redirect to login page
 
-
-# Your view functions remain the same...
 def password_reset_request(request):
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)

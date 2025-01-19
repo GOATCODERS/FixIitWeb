@@ -1,11 +1,13 @@
 # reports/views.py
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ReportForm
 from .models import Report
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 @login_required
 def report_fault(request):
@@ -24,5 +26,18 @@ def report_fault(request):
 
 @login_required
 def list_reports(request):
-    reports = Report.objects.filter(user=request.user).order_by('-created_at')
+    if request.user.is_staff:
+        userIsStaff = request.user.is_staff
+        print("your is staff: ", userIsStaff)
+        reports = Report.objects.order_by('-created_at')
+        return render(request, 'reporting/admin_dashboard.html', {'reports': reports})
+
+    else:
+        reports = Report.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'reporting/list_reports.html', {'reports': reports})
+
+@login_required
+def report_detail(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+    return render(request, 'reporting/report_detail.html', {'report': report})
+    

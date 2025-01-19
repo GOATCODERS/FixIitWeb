@@ -1,12 +1,8 @@
-/* body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
+
 
 .navbar {
     background-color: #333;
-    color: white;
+    color: rgb(2, 62, 1);
     padding: 1em 0;
 }
 
@@ -20,7 +16,7 @@
 }
 
 .navbar > a {
-    color: white;
+    color: rgb(2, 62, 1);
     text-decoration: none;
     margin-right: 1em;
 } 
@@ -40,7 +36,13 @@
     margin-left: 1em;
 }
 
-*/
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
 .footer {
     background-color: #49ff3c27;
     text-align: center;

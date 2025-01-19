@@ -13,9 +13,9 @@ def schedule_appointment(request, report_id):
             appointment = form.save(commit=False)
             appointment.report = report
             appointment.employee = request.user  # Assuming employee is scheduling
-            appointment.resident = report.submitted_by
+            appointment.resident = report.user
             appointment.save()
-            return redirect('report_detail', report_id=report.id)
+            return redirect('appointment_list')
     else:
         form = AppointmentForm()
     return render(request, 'appointments/schedule.html', {'form': form, 'report': report})
