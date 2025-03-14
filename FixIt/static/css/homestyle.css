@@ -1,0 +1,44 @@
+
+.hero-section {
+    background: linear-gradient(rgba(251, 255, 34, 0.496), rgba(43, 255, 46, 0.502)), url('https://source.unsplash.com/1600x900/?city,technology');
+    background-size: cover;
+    background-position: center;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    padding: 200px 20px;
+    min-height: 100px;
+}
+.hero-section h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+.hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+.btn-primary {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 25px;
+}
+.features-section {
+    padding: 60px 20px;
+    text-align: center;
+}
+.features-section h2 {
+    margin-bottom: 40px;
+    font-size: 2.5rem;
+}
+.feature {
+    margin-bottom: 30px;
+}
+.feature i {
+    font-size: 3rem;
+    color: #43ff2a;
+}
+.footer {
+    background-color: #49ff3c27;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
