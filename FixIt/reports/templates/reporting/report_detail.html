@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Fix It - Report Details{% endblock %}
+
+{% block content %}
+
+{% load static %}
+{% load report_filters %}
+
+<link rel="stylesheet" href="{% static 'css/register.css' %}"> <!-- Reusing the register CSS -->
+
+<style>
+
+      gmp-map{
+        height: 20vh;
+        width: 100%;
+
+      }
+      @media (max-width: 768px) {
+        .list {
+            display: none;
+          }
+          .register-card {
+             max-width: 0px;
+             padding: 0px;
+             margin: 0px
+          }
+          .col-12 {
+            padding: 0px
+          }
+      }
+    </style>
+
+<div class="container mt-5 mb-5" style="margin-top: 20px">
+    <div class="row w-100">
+        <!-- List of other reports -->
+        <div class="list col-12 col-lg-4">
+            <div class="container row">
+                <div class="header">
+                    <h3>All Reports</h3>
+                    <p class="mb-0">Other reports in the system, including the one you are viewing.</p>
+                </div>
+                <div class="register-body">
+                    <ol class="list-group list-group-numbered">
+                        {% for other_report in reports %}
+                        <li class="list-group-item d-flex justify-content-between align-items-start {% if other_report.id == report.id %}active{% endif %}">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">
+                                    <a href="{% url 'report_detail' other_report.id %}"
+                                       class="text-decoration-none {% if other_report.id == report.id %}text-white{% else %}text-primary{% endif %}">
+                                        Report #{{ other_report.id }} - {{ other_report.fault_type.name }}
+                                    </a>
+                                </div>
+                                <small class="text-muted">{{ report.created_at|date:"M d, Y H:i" }}</small>
+                            </div>
+                            <span class="badge bg-{{ other_report.status|status_color }} rounded-pill">
+                                {{ other_report.status }}
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <!-- Main report details -->
+        <div class="col-12 col-lg-6">
+            <!-- Main details card -->
+            <div class="register-card">
+                <div class="register-header">
+                    <h2>Report Details</h2>
+                    <p class="mb-0">View the details of the fault reported.</p>
+                </div>
+                <div class="register-body">
+                    <h3 class="mb-4">Report #{{ report.id }}</h3>
+                    <div class="mb-3">
+                        <strong>Fault Type:</strong> {{ report.fault_type.name }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Description:</strong> {{ report.description }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Location:</strong> <span id="location-name">Loading...</span>
+                        <gmp-map center="{{ report.location }}" zoom="12" map-id="DEMO_MAP_ID">
+                            <gmp-advanced-marker position="{{ report.location }}"></gmp-advanced-marker>
+                        </gmp-map>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Status:</strong>
+                        <span class="badge bg-{{ report.status|status_color }}">
+                            {{ report.status }}
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Created At:</strong> {{ report.created_at|date:"F j, Y, g:i a" }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Last Updated:</strong> {{ report.updated_at|date:"F j, Y, g:i a" }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Photo:</strong>
+                        <div class="text-center mt-2">
+                            {% if report.photo %}
+                                <img src="{{ report.photo.url }}" alt="Report Photo" class="img-fluid rounded border" style="max-height: 300px; max-width: 100%;">
+                            {% else %}
+                                <p>No photo provided</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h2 class="card-header">Reporter Information</h2>
+                        <div class="card-body">
+                            <p><strong>Username:</strong> {{ report.user.username }}</p>
+                            <p><strong>Email:</strong> {{ report.user.email }}</p>
+                            <p><strong>Role:</strong> {{ report.user.get_role_display }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-4">
+                        <div class="btn-group mx-auto w-75">
+                            <a href="{% url 'report_update' report.id %}" class="btn btn-register w-100">
+                                <i class="fas fa-edit me-2"></i> Update Report
+                            </a>
+                            <a href="{% url 'list_reports' %}" class="btn btn-secondary w-100">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Reports
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+</div>
+</div>
+
+    <script>
+
+        function initMap() {
+            console.log("Google Maps API Loaded Successfully!");
+            document.dispatchEvent(new Event("GoogleMapsLoaded"));
+        }
+
+
+     function getAddressFromCoordinates(lat, lng) {
+        const geocoder = new google.maps.Geocoder();
+        const latlng = { lat: lat, lng: lng };
+
+        geocoder.geocode({ location: latlng }, (results, status) => {
+            if (status === "OK") {
+                if (results[0]) {
+                    document.getElementById('location-name').innerText = results[0].formatted_address;
+                } else {
+                    document.getElementById('location-name').innerText = "Location not found";
+                    console.error("No results found");
+                }
+            } else {
+                console.error("Geocoder failed due to: " + status);
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const locationStr = "{{ report.location|escapejs }}";  // Escaped for JavaScript safety
+        const coords = locationStr.split(',').map(coord => parseFloat(coord.trim()));
+
+        if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+            getAddressFromCoordinates(coords[0], coords[1]);
+        } else {
+            document.getElementById('location-name').innerText = "Invalid coordinates";
+        }
+    });
+</script>
+
+{% endblock %}

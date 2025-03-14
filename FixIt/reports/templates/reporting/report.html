@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+
+{% block title %}Fix It - Report Fault{% endblock %}
+
+{% block content %}
+
+{% load static %}
+{% load report_filters %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}"> <!-- Reusing the register CSS -->
+
+
+    <script>
+
+        function initMap() {
+            console.log("Google Maps API Loaded Successfully!");
+            document.dispatchEvent(new Event("GoogleMapsLoaded"));
+        }
+
+let latitude;
+let longitude;
+let mapData;
+let placeData;
+let currentMarker = null;
+
+async function init() {
+    await customElements.whenDefined('gmp-map');
+
+    const map = document.querySelector('gmp-map');
+    const placePicker = document.querySelector('gmpx-place-picker');
+    const infowindow = new google.maps.InfoWindow();
+
+    map.innerMap.setOptions({
+        mapTypeControl: false
+    });
+
+    placePicker.addEventListener('input', async () => {
+        setTimeout(() => {
+            const place = placePicker.value;
+             console.log("Manually Entered Coordinates: " + place);
+            if (place && place.location) {
+                const lat = place.location.lat();
+                const lng = place.location.lng();
+
+                document.getElementById('location').value = `${lat},${lng}`;
+                console.log("Manually Entered Coordinates: " + lat + ", " + lng);
+            }
+        }, 1000); // Delay to allow processing
+    });
+
+    placePicker.addEventListener('gmpx-placechange', () => {
+
+        const place = placePicker.value;
+        console.log("Place selected:", place);
+        const lat = place.location.lat();
+        const lng = place.location.lng();
+        if (!place || !place.location) {
+            alert("No details available for input: '" + place.name + "'");
+            return;
+        }
+
+        // Ensure location field updates
+        const locationField = document.getElementById('location');
+        locationField.value = `${lat},${lng}`;
+
+        // Update the address display
+        document.getElementById('address').innerHTML = `<strong>${place.displayName || place.formattedAddress}</strong><br>${place.formattedAddress}`;
+
+        // Fetch the address for manually entered coordinates
+        document.getElementById('location').value = lat + ',' + lng;
+
+        console.log("Coordinates: " + locationField.value);
+
+        // Fix: Ensure marker is added correctly
+        addAMarker(lat, lng, place.displayName || place.formattedAddress);
+    });
+
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('getLocation').addEventListener('click', function () {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+                console.log("Location: " + latitude + ", " + longitude);
+                getAddressFromCoordinates(latitude, longitude);
+                document.getElementById('location').value = latitude + ',' + longitude;
+
+
+            }, function (error) {
+                alert('Error fetching location. Ensure location is enabled.');
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    });
+
+    document.getElementById('photo').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const fileSize = file.size / 1024 / 1024;
+            const allowedTypes = ['image/jpeg', 'image/png'];
+            if (fileSize > 5) {
+                alert('File size must be 5MB or less.');
+                event.target.value = '';
+            } else if (!allowedTypes.includes(file.type)) {
+                alert('Only JPEG and PNG files are allowed.');
+                event.target.value = '';
+            }
+        }
+    });
+});
+
+async function addAMarker(lat, lng, title) {
+    const map = document.querySelector('gmp-map');
+    if (!map) {
+        console.error("Map element not found");
+        return;
+    }
+
+    console.log("Adding marker at:", lat, lng, title);
+
+    // Remove existing marker if it exists
+    if (currentMarker && currentMarker.parentNode) {
+        currentMarker.parentNode.removeChild(currentMarker);
+    }
+
+    // Create a new marker
+    currentMarker = document.createElement('gmp-advanced-marker');
+    currentMarker.setAttribute('position', `${lat},${lng}`);
+    currentMarker.setAttribute('title', title);
+
+    // Append marker to map
+    map.appendChild(currentMarker);
+
+    // Center map on marker
+    map.center = { lat, lng };
+    map.zoom = 17;
+
+    // Create an InfoWindow
+    const infowindow = new google.maps.InfoWindow({
+        content: `<strong>${title}</strong><br>Latitude: ${lat}, Longitude: ${lng}`
+    });
+
+    // Open the InfoWindow when marker is clicked
+    currentMarker.addEventListener('click', () => {
+        infowindow.open(map.innerMap, currentMarker);
+    });
+
+    // Auto-open info window immediately
+    setTimeout(() => {
+        infowindow.open(map.innerMap, currentMarker);
+    }, 1000);
+}
+
+
+
+window.onload = () => {
+    init().catch(console.error);
+};
+
+function autoExpand(element) {
+    element.style.height = "auto"; // Reset height
+    element.style.height = element.scrollHeight + "px"; // Set new height
+}
+
+// Get Address from coordinates method
+function getAddressFromCoordinates(lat, lng) {
+    //const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+    /*
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.address) {
+                mapData = data;
+                console.log("Address: " + data.display_name);
+                document.getElementById('address').innerText = mapData.display_name;
+            } else {
+                console.log("No address found");
+            }
+        })
+        .catch(error => console.log("Error:", error));
+        */
+
+        const geocoder = new google.maps.Geocoder();
+        const latlng = { lat: lat, lng: lng };
+
+        geocoder.geocode({ location: latlng }, (results, status) => {
+            if (status === "OK") {
+                if (results[0]) {
+                    document.getElementById("address").innerText = results[0].formatted_address;
+                    var current_loc = "Current Location<br>" + results[0].formatted_address;
+                    addAMarker(lat, lng, current_loc);
+                    console.log("Country:", results[0].address_components[3].long_name);
+                } else {
+                    console.log("No results found");
+                }
+            } else {
+                console.log("Geocoder failed due to: " + status);
+            }
+        });
+
+}
+
+    </script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/@googlemaps/extended-component-library/0.6.11/index.min.js">
+    </script>
+    <style>
+
+      .place-picker-container {
+        padding: 20px;
+      }
+      gmp-map{
+        height: 72vh;
+        width: 75%
+
+      }
+      @media (max-width: 768px) {
+        gmp-map{
+            display: none;
+
+          }
+      }
+    </style>
+
+
+
+
+    <div class="container row" style="margin-top: 64px; justify-content: center;">
+
+        <div class="col-12 col-lg-5" style="padding-left: 0px; padding-right: 6px;">
+        <div class=""> <!-- Reusing register-card for the container styling -->
+            <div class=""> <!-- Reusing header style -->
+                <h2>Report a Fault</h2>
+                <p class="mb-0">Help us resolve issues quickly by reporting them here.</p>
+            </div>
+            <div class="register-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="faultType" class="form-label">Fault Type</label>
+                        {{ form.fault_type|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <!-- Place placePicker -->
+
+                        <div class="d-flex">
+                        <input type="hidden" name="location" id="location"  >
+
+                            <gmpx-place-picker placeholder="Enter an address" class=""></gmpx-place-picker>
+
+                            <a type="button" class="btn btn-light text-success ms-2 w-25" id="getLocation">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="2" stroke="currentColor" height="16" width="16" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                                </svg>
+                                Live
+                            </a>
+                        </div>
+                        <div id="address"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description" rows="3" wrap="hard"
+                                  cols="50" placeholder="Type something..."
+                                  oninput="autoExpand(this)" class="form-control">
+                        </textarea>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Photo (optional)</label>
+                        <input type="file" name="photo" id="photo" class="form-control" accept="image/png, image/jpeg">
+                        <small class="text-muted">Max size: 5MB (JPEG, PNG only)</small>
+                    </div>
+                    <button type="submit" class="btn btn-register w-100">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Report
+                    </button>
+                </form>
+            </div>
+        </div>
+
+             </div>
+        <!-- Main report details -->
+        <div class="col-12 col-lg-4">
+        <!-- maps drawMap -->
+        <gmp-map center="-25.7460,28.1881" zoom="12" map-id="DEMO_MAP_ID">
+
+          <gmp-advanced-marker></gmp-advanced-marker>
+        </gmp-map>
+        </div>
+
+    </div>
+
+
+
+
+
+{% endblock %}

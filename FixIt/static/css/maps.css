@@ -1,0 +1,24 @@
+#map {
+    height: 94vh;
+    width: 50%;
+}
+
+.row{
+    height: fit-content;
+}
+.address #zoomLevel{
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.place-picker-container {
+  padding: 20px;
+}
+
+gmp-map{
+    height: 72vh;
+    width: 75%
+
+}
+
+

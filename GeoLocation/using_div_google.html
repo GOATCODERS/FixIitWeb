@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Location on Google Map</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAELk_rLVbxbgF60RhcmF3NXeUPz6FNY3g&callback=initMap" async defer></script>
+    <style>
+        /* Set the size of the map */
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Your Current Location</h2>
+    <div id="map"></div>
+
+    <script>
+        let map, marker;
+
+        function initMap() {
+            // Default center coordinates
+            const defaultCenter = { lat: -25.7479, lng: 28.2293 }; // Pretoria
+
+            // Create the map centered at default coordinates
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: defaultCenter,
+            });
+
+            // Try to get the user's current position
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+
+                        // Center the map at the user's location
+                        const userLocation = { lat: userLat, lng: userLng };
+                        map.setCenter(userLocation);
+
+                        // Place a marker at the user's location
+                        marker = new google.maps.Marker({
+                            position: userLocation,
+                            map: map,
+                            title: "You are here",
+                        });
+                    },
+                    function () {
+                        // If geolocation fails, center the map at the default location
+                        alert("Geolocation failed. Using default location.");
+                        map.setCenter(defaultCenter);
+                    }
+                );
+            } else {
+                // If geolocation is not supported
+                alert("Geolocation is not supported by this browser.");
+                map.setCenter(defaultCenter);
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Fix It - Report Fault{% endblock %}
+
+{% block content %}
+
+{% load static %}
+{% load report_filters %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}"> <!-- Reusing the register CSS -->
+
+<div class="container mx-auto" style="margin-top: 80px;">
+    <div class="register-card"> <!-- Reusing register-card for the container styling -->
+        <div class="register-header"> <!-- Reusing header style -->
+            <h2>Report a Fault</h2>
+            <p class="mb-0">Help us resolve issues quickly by reporting them here.</p>
+        </div>
+        <div class="register-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="faultType" class="form-label">Fault Type</label>
+                    {{ form.fault_type|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    {{ form.location|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    {{ form.description|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="photo" class="form-label">Photo (optional)</label>
+                    {{ form.photo|add_class:"form-control" }}
+                </div>
+                <button type="submit" class="btn btn-register w-100">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Report
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

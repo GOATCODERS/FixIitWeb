@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Stories UI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .stories-container {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px;
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+        }
+        .stories-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for Chrome/Safari */
+        }
+        .story {
+            position: relative;
+            min-width: 120px;
+            max-width: 120px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-right: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .story:hover {
+            transform: scale(1.05);
+        }
+        .story img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .story .profile {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 35px;
+            height: 35px;
+            border: 3px solid #1877f2;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .story .profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .story-text {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+    <h3>Facebook Stories</h3>
+    <div class="stories-container">
+        
+        <!-- Example Story 1 -->
+        <div class="story" data-bs-toggle="modal" data-bs-target="#storyModal1">
+            <div class="profile">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile">
+            </div>
+            <img src="https://source.unsplash.com/200x300/?nature,water" alt="Story Image">
+            <div class="story-text">Jane Doe</div>
+        </div>
+
+        <!-- Example Story 2 -->
+        <div class="story" data-bs-toggle="modal" data-bs-target="#storyModal2">
+            <div class="profile">
+                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Profile">
+            </div>
+            <img src="https://source.unsplash.com/200x300/?city,night" alt="Story Image">
+            <div class="story-text">John Smith</div>
+        </div>
+
+        <!-- Example Story 3 -->
+        <div class="story" data-bs-toggle="modal" data-bs-target="#storyModal3">
+            <div class="profile">
+                <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="Profile">
+            </div>
+            <img src="https://source.unsplash.com/200x300/?travel,beach" alt="Story Image">
+            <div class="story-text">Alice Brown</div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Story Modal 1 -->
+<div class="modal fade" id="storyModal1" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <img src="https://source.unsplash.com/600x800/?nature,water" class="w-100" alt="Story 1">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Story Modal 2 -->
+<div class="modal fade" id="storyModal2" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <img src="https://source.unsplash.com/600x800/?city,night" class="w-100" alt="Story 2">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Story Modal 3 -->
+<div class="modal fade" id="storyModal3" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <img src="https://source.unsplash.com/600x800/?travel,beach" class="w-100" alt="Story 3">
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

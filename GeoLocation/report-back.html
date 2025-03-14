@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+
+{% block title %}Fix It - Report Fault{% endblock %}
+
+{% block content %}
+
+{% load static %}
+{% load report_filters %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+<link rel="stylesheet" href="{% static 'css/maps.css' %}">
+
+<div class="container mx-auto " style="margin-top: 80px;">
+    <div class="w-100 d-flex justify-content-between">
+
+        <!-- report form-->
+        <div class="register-card me-5 "  style="min-width: 320px; max-width: 400px">
+            <div class="register-header">
+                <h2>Report a Fault</h2>
+                <p class="mb-0">Help us resolve issues quickly by reporting them here.</p>
+            </div>
+            <div class="register-body">
+                <form method="POST" enctype="multipart/form-data" id="faultReportForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="faultType" class="form-label">Fault Type</label>
+                        {{ form.fault_type|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <div class="d-flex">
+                            {{ form.location|add_class:"form-control" }}
+                            <a type="button" class="btn btn-light text-success ms-2 w-25" id="getLocation">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     stroke-width="2" stroke="currentColor" height="16" width="16" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                                </svg>
+                                Live
+                            </a>
+                        </div>
+                        <div id="address"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description" rows="3" wrap="hard"
+                                  cols="50" placeholder="Type something..."
+                                  oninput="autoExpand(this)" class="form-control">
+                        </textarea>
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Photo (optional)</label>
+                        <input type="file" name="photo" id="photo" class="form-control" accept="image/png, image/jpeg">
+                        <small class="text-muted">Max size: 5MB (JPEG, PNG only)</small>
+                    </div>
+                    <button type="submit" class="btn btn-register w-100">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Report
+                    </button>
+                </form>
+            </div>
+        </div >
+
+        <!-- Map-->
+<!--        <div id="map" ></div>-->
+         <gmpx-api-loader key="AIzaSyAELk_rLVbxbgF60RhcmF3NXeUPz6FNY3g" solution-channel="GMP_GE_mapsandplacesautocomplete_v2">
+         </gmpx-api-loader>
+         <gmp-map center="40.749933,-73.98633" zoom="13" map-id="f7ceccd9f09381bb">
+           <div slot="control-block-start-inline-start" class="place-picker-container">
+             <gmpx-place-picker placeholder="Enter an address"></gmpx-place-picker>
+           </div>
+           <gmp-advanced-marker></gmp-advanced-marker>
+         </gmp-map>
+
+<!--        <div class="container row">-->
+<!--            <div class="register-header">-->
+<!--                <h3>All Reports</h3>-->
+<!--                <p class="mb-0">Other reports in the system, including the current one.</p>-->
+<!--            </div>-->
+<!--            <div class="register-body">-->
+<!--                <ol class="list-group list-group-numbered">-->
+<!--                    {% for other_report in reports %}-->
+<!--                    <li class="list-group-item d-flex justify-content-between align-items-start {% if other_report.id == report.id %}active{% endif %}">-->
+<!--                        <div class="ms-2 me-auto">-->
+<!--                            <div class="fw-bold">-->
+<!--                                <a href="{% url 'report_detail' other_report.id %}"-->
+<!--                                   class="text-decoration-none {% if other_report.id == report.id %}text-white{% elif other_report.fault_type.importances == 1 %}text-primary{% elif other_report.fault_type.importances == 2 %}text-warning{% elif other_report.fault_type.importances == 3 %}text-danger{% endif %}">-->
+<!--                                    Report #{{ other_report.id }} - {{ other_report.fault_type.name }}-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                            {{ other_report.description|truncatechars:50 }}-->
+<!--                            <br>-->
+<!--                            <small class="text-muted">Location: {{ other_report.location }}</small>-->
+<!--                        </div>-->
+<!--                        <span class="badge bg-{{ other_report.status|status_color }} rounded-pill">-->
+<!--                            {{ other_report.status }}-->
+<!--                        </span>-->
+<!--                    </li>-->
+<!--                    {% endfor %}-->
+<!--                </ol>-->
+<!--            </div>-->
+<!--        </div>-->
+    </div>
+</div>
+<script>
+
+    let latitude;
+    let longitude;
+    let map
+    let mapData;
+    let marker;
+
+    function initMap() {
+        // Your code to call getAddressFromCoordinates goes here
+    }
+    /*
+    function getAddressFromCoordinates(lat, lng) {
+        const geocoder = new google.maps.Geocoder();
+        const latlng = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+        geocoder.geocode({ 'location': latlng }, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    console.log("Address: " + results[0].formatted_address);
+                    document.getElementById('{{ form.location.auto_id }}').value = `${lat}, ${lng}, ${results[0].formatted_address}`;
+                } else {
+                    console.log("No results found");
+                }
+            } else {
+                console.log("Geocoder failed due to: " + status);
+            }
+        });
+    }
+    */
+
+    function getAddressFromCoordinates(lat, lng) {
+        const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+    console.log("No address found");
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.address) {
+                    mapData = data;
+                    console.log("Address: " + data.display_name);
+                    document.getElementById('{{ form.location.auto_id }}').value = `${data.display_name}`;
+                    document.getElementById('address').innerText = mapData.display_name;
+                } else {
+                    console.log("No address found");
+                }
+            })
+            .catch(error => console.log("Error:", error));
+    }
+
+     function drawMap(lat, lng, zoomValue){
+            // Initialize map
+            map = L.map('map').setView([lat, lng], zoomValue); // Zoom level 18 for details
+
+            // Add OpenStreetMap tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            map.on('zoomend', function() {
+                var zoomLevel = map.getZoom();
+                console.log("Current Zoom Level: " + zoomLevel);
+                document.getElementById('zoomLevel').innerText = "Zoom: " + zoomLevel;
+            });
+
+    }
+
+    document.getElementById('getLocation').addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                 latitude = position.coords.latitude;
+                 longitude = position.coords.longitude;
+                    console.log("location: " + latitude + ", " + longitude);
+                    getAddressFromCoordinates(latitude, longitude); // Use actual coordinates here
+                    addAMarker(latitude, longitude, "Mamelodi");
+            }, function(error) {
+                alert('Error fetching location. Ensure location is enabled.');
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    });
+
+    drawMap(0, 1, 4);
+
+    function addAMarker(lat, lng, address) {
+            if (marker) {
+                map.removeLayer(marker); // Remove previous marker
+            }
+
+            if(map.getZoom() < 14)
+            {
+                map.setView([lat, lng], 14);
+            }else{
+                map.setView([lat, lng]);
+            }
+
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup(address)
+                .openPopup();
+        }
+
+    document.getElementById('photo').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const fileSize = file.size / 1024 / 1024;
+            const allowedTypes = ['image/jpeg', 'image/png'];
+            if (fileSize > 5) {
+                alert('File size must be 5MB or less.');
+                event.target.value = '';
+            } else if (!allowedTypes.includes(file.type)) {
+                alert('Only JPEG and PNG files are allowed.');
+                event.target.value = '';
+            }
+        }
+    });
+    function autoExpand(element) {
+        	element.style.height = "auto"; // Reset height
+       		element.style.height = element.scrollHeight + "px"; // Set new height
+   	 }
+
+
+async function init() {
+  await customElements.whenDefined('gmp-map');
+
+  const map = document.querySelector('gmp-map');
+  const marker = document.querySelector('gmp-advanced-marker');
+  const placePicker = document.querySelector('gmpx-place-picker');
+  const infowindow = new google.maps.InfoWindow();
+
+  map.innerMap.setOptions({
+    mapTypeControl: false
+  });
+
+  placePicker.addEventListener('gmpx-placechange', () => {
+    const place = placePicker.value;
+
+    if (!place.location) {
+      window.alert(
+        "No details available for input: '" + place.name + "'"
+      );
+      infowindow.close();
+      marker.position = null;
+      return;
+    }
+
+    if (place.viewport) {
+      map.innerMap.fitBounds(place.viewport);
+    } else {
+      map.center = place.location;
+      map.zoom = 17;
+    }
+
+    marker.position = place.location;
+    infowindow.setContent(
+      `<strong>${place.displayName}</strong><br>
+       <span>${place.formattedAddress}</span>
+    `);
+    infowindow.open(map.innerMap, marker);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+{% endblock %}

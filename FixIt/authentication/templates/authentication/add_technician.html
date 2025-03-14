@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Fix It - Add Technician{% endblock %}
+
+{% block content %}
+
+{% load static %}
+{% load custom_filters %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+<div class="container  mx-auto" style="margin-top:128px; min-height:95vh">
+    <div class="col-12 col-lg-4">
+        <div class="register-card w-50">
+        <div class="register-header">
+            <h2>Add Technician</h2>
+            <p class="mb-0">Update or add a new technician</p>
+        </div>
+        <div class="register-body">
+            <form method="POST" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+
+                        {% if field.name == "is_available" %}
+                            <br>
+                            <div class="form-check form-switch">
+                                <input type="checkbox" class="form-check-input bg-success"
+                                       style="--bs-bg-opacity: .6;" role="switch"
+                                       id="{{ field.id_for_label }}" name="{{ field.name }}"
+                                       {% if field.value %}checked{% endif %}>
+                                <label class="form-check-label" for="{{ field.id_for_label }}">
+                                    {% if field.value %}Available{% endif %}
+                                </label>
+                            </div>
+                        {% elif field.name == "user" %}
+                            <div class="d-flex">
+                                {{ field }}
+
+                                <a href="{% url 'register' %}" class="btn btn-link ms-2 mt-2 text-success" data-bs-toggle="tooltip"
+                                   title="Add a new User">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                </a>
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <small class="form-error-message text-danger">
+                                <i class="fas fa-exclamation-circle me-1"></i> {{ field.errors }}
+                            </small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-register w-100">
+                        <i class="fas fa-user-plus me-2"></i> Save Technician
+                    </button>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="container row mt-3">
+        <div class="header">
+            <h3>All Technicians</h3>
+            <p class="mb-0">Other technicians in the system, including those who are not available</p>
+        </div>
+        <div class="register-body" st>
+            <ol class="list-group list-group-numbered">
+                {% for technician in technicians %}
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">
+                                <a href="#"
+                                   class="text-decoration-none text-primary">
+                                    Technician #{{ technician.id }} -
+                                    {{ technician.user.get_full_name|default:technician.user.username }}
+                                </a>
+                            </div>
+                            <small class="text-muted">
+                                Added on {{ technician.user.date_joined|date:"M d, Y H:i" }}
+                            </small>
+                        </div>
+                        <span class="badge rounded-pill {% if technician.is_available %}bg-success{% else %}bg-danger{% endif %} ">
+                            {{ technician.user.username }}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    });
+</script>
+
+{% endblock %}

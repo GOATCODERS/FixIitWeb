@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Fix It - Update Report{% endblock %}
+
+{% block content %}
+
+{% load report_filters %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}"> <!-- Reusing the register CSS -->
+
+<div class="container mx-auto">
+    <div class="register-card">
+        <div class="register-header">
+            <h2>Update Report</h2>
+            <p class="mb-0">Modify the details of the reported fault below.</p>
+        </div>
+        <div class="register-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    {{ form.description|add_class:"form-control" }}
+                </div>
+                <div class="mb-3">
+                    <label for="photo" class="form-label">Photo (optional)</label>
+                    {{ form.photo|add_class:"form-control" }}
+                </div>
+                <button type="submit" class="btn btn-register w-100">
+                    <i class="fas fa-save me-2"></i> Save Changes
+                </button>
+                <a href="{% url 'report_detail' report.id %}" class="btn btn-secondary mt-3">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

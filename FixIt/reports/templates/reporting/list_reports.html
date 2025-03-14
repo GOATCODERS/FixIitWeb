@@ -1,0 +1,193 @@
+
+{% extends 'base.html' %}
+
+{% block title %}My Fault Reports{% endblock %}
+
+{% block content %}
+
+{% load static %}
+{% load report_filters %}
+<link rel="stylesheet" href="{% static 'css/reportform.css' %}">
+
+
+<section class="pt-5 text-center container">
+<div class="row pb-lg-5">
+  <div class="col-lg-6 col-md-8 mx-auto">
+    <h1 class="fw-light">My Fault Report List</h1>
+    <p class="lead text-muted">Overview of submitted fault reports, Keep checking for updates </p>
+
+      {% if user.role == 'resident' %}
+            <a href="{% url 'report_fault' %}" class="btn btn-success my-2">Add a report</a>
+        {% elif user.role == 'employee' %}
+            <button type="button" class="btn btn-outline-secondary" id="liveToastBtn">Assign All</button>
+            <div class="toast-container position-fixed top-0 end-0 p-3">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body">
+                        Are you sure you want to assign all available technicians?
+                        <div class="mt-2 pt-2 border-top">
+                            <a href="{% url 'assign_all_tasks' %}" class="btn btn-outline-success btn-sm">Confirm</a>
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+  </div>
+</div>
+</section>
+<div class="album pb-5 bg-light">
+    <div class="container">
+
+        {% if reports %}
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+            {% for report in reports %}
+            <div class="col" style=" min-width: 300px;">
+
+                <div class="card" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+
+
+                    {% if report.photo %}
+                        <img src="{{ report.photo.url }}" alt="Report Photo"
+                             class="img-fluid rounded border w-72 h-50"  style="max-height:225px;">
+                    {% else %}
+                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                         xmlns="http://www.w3.org/2000/svg" role="img"
+                         aria-label="Placeholder: Thumbnail"
+                         preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Placeholder</title>
+                        <rect width="100%" height="100%" fill="#55595c"/>
+                        <text x="35%" y="50%" fill="#eceeef" dy=".3em">Photo Not Available</text>
+                    </svg>
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <div class="card-text">
+                            <div class="container">
+
+                                <div class=" mb-3 d-flex justify-content-between">
+                                    <div class="">
+                                        <h6 class="text-success"><strong>{{ report.fault_type }}</strong></h6>
+                                    </div>
+                                    <div class="d-flex">
+                                        <span class="badge bg-{{ report.status|status_color }}">
+                                            {{ report.status }}
+                                        </span>
+                                    </div>
+
+                                </div>
+                                <div class=" d-flex justify-content-between">
+
+                                    <div class="">
+                                        <strong>Location: </strong>
+                                    </div>
+
+                                    <div class="">
+                                        <strong>Sent by: </strong>
+                                    </div>
+
+                                </div>
+                                <div class=" d-flex justify-content-between">
+
+                                    <div class="">
+                                        <p>{{ report.location|truncatewords:5 }}</p>
+                                    </div>
+
+                                    <div class="">
+                                        <p >{{ report.user.username }}</p>
+                                    </div>
+
+                                </div>
+                                <div class="row mb-3">
+
+                                    <div class="col mx-2">
+                                        <small class="text-muted">{{ report.description|truncatechars:50 }}</small>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="{% url 'report_detail' report.id %}" class="btn btn-sm btn-outline-info">View</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                            <small class="text-muted">{{ report.created_at|date:"M d, Y H:i" }}</small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="container py-5" style="margin-top: 80px;">
+            <div class="form-container mx-auto shadow p-4">
+                <h1 class="text-center text-success mb-4">Summary</h1>
+
+                {% if reports %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-success">
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Fault Type</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in reports %}
+                            <tr>
+                                <td>{{ report.id }}</td>
+                                <td>{{ report.user.username }}</td>
+                                <td>{{ report.fault_type }}</td>
+                                <td>{{ report.description|truncatechars:100 }}</td>
+                                <td>
+                                    <span class="badge bg-{{ report.status|status_color }}">
+                                        {{ report.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'report_detail' report.id %}"
+                                       class="btn btn-sm btn-info">View</a>
+
+                                    <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No reports found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">You have not submitted any fault reports yet.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+            <div class="container row text-center text-muted h-100" style="hi">
+                <svg width="150" height="150"  xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                     class="size-3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 0 0-1.883 2.542l.857 6a2.25 2.25 0 0 0 2.227 1.932H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-1.883-2.542m-16.5 0V6A2.25 2.25 0 0 1 6 3.75h3.879a1.5 1.5 0 0 1 1.06.44l2.122 2.12a1.5 1.5 0 0 0 1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776" />
+                </svg>
+                <p class="">
+                You have not submitted any fault reports yet.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+

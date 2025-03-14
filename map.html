@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenStreetMap Example</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+	body { display: flex;}
+        #map { height: 95vh;
+		width: 50%; }
+	
+	
+    </style>
+</head>
+<body>
+    <div>
+	<textarea id="myTextarea" rows="4" wrap="hard" cols="50" placeholder="Type something..." oninput="autoExpand(this)"></textarea>
+	<div id="myTextDisplay" style="max-width: 300px; overflow: hidden;"></div>
+	<p id="wordCount"></p>
+
+</div>
+	<div id="map"></div>
+    <script>
+
+        var map = L.map('map').setView([-25.7093787, 28.4045189], 100); // Coordinates for London
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.marker([-25.709372503329764, 28.40454519773267]).addTo(map) // Add a marker at London
+            .bindPopup('A marker in London')
+            .openPopup();
+
+const fullText = "This is an example of a longer text that will be truncated after a certain number of words.";
+
+function limitWords(text, maxWords) {
+        const words = text.split(/\s+/);
+        return words.slice(0, maxWords).join(' ') + (words.length > maxWords ? '...' : '');
+    }
+
+    document.getElementById('myTextarea').addEventListener('input', function () {
+        const text = this.value;
+        const maxWords = 10;  // Set your word limit here
+        const words = text.split(/\s+/);  // Split text into words
+        const limitedWords = words.slice(0, maxWords).join(' ');  // Limit words
+        this.value = limitedWords;  // Set the textarea value to the truncated text
+        
+	const numWords = parseInt(words[0]);
+	
+        // Optionally display the word count
+	const truncatedText = limitWords(fullText, numWords); // Limit to 5 words
+    	document.getElementById('myTextDisplay').innerText = truncatedText;
+        document.getElementById('wordCount').innerText = `Word(s): ${limitedWords.split(/\s+/).length}`;
+    });
+
+
+    
+	function autoExpand(element) {
+        	element.style.height = "auto"; // Reset height
+       		element.style.height = element.scrollHeight + "px"; // Set new height
+   	 }
+    
+    
+    // Optionally, display the word count
+    document.getElementById('wordCount').innerText = `Words: ${truncatedText.split(/\s+/).length}`;
+    </script>
+</body>
+</html>
